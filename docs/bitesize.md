@@ -14,5 +14,15 @@
     - Discover
         - Discover Token?
         - B/P2P (Broadcast-Peer-2-Peer)
-2. Multithreading?
-3. Frontend über REST/GraphQL?
+2. Multithreading/Asynchron
+3. Frontend über Custom Terminal Renderer
+
+
+Event Driven!
+
+## Stack:
+- UPnP Networking (& JWT?)
+- Protocol Buffers
+- Java Maven Kotlin
+- JUnit5 MockK
+- xxHash
