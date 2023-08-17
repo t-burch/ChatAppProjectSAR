@@ -16,6 +16,9 @@ object DiscoveredClientsStore {
     }
 
     fun getAllClients(): Map<String, ClientEntry> = store.toMap()
-
-    data class ClientEntry(val name: String, var lastSeen: Long)
 }
+
+data class ClientEntry(
+    val name: String,
+    var lastSeen: Long
+)
