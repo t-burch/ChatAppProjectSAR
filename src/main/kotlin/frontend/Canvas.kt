@@ -1,6 +1,6 @@
 package frontend
 
-import util.Globals
+import frontend.painter.Painter
 import util.Globals.Color.TRANSPARENT
 import kotlin.collections.MutableList
 import kotlin.collections.List
@@ -11,12 +11,13 @@ class Canvas(
     canvasHeight: Int
 ) {
     private val store: MutableList<MutableList<MutableList<Rich>>> = mutableListOf()
-    private val size = Pair(canvasWidth, canvasHeight)
+    val size = Pair(canvasWidth, canvasHeight)
 
     fun blit(
-        layer: List<List<Rich>>,
+        painter: Painter,
         locator: Pair<Int, Int>
     ) {
+        val layer: List<List<Rich>> = painter.paint()
         val result = mutableListOf<MutableList<Rich>>()
         val spacer = Rich("\u2800", TRANSPARENT, BackgroundColorTRANSPARENT)
         val hFinalSpacer = List(size.first){ spacer }

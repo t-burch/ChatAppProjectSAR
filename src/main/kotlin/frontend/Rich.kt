@@ -8,7 +8,7 @@ class Rich(
     private val color: Color,
     private val backgroundColor: BackgroundColor
 ) {
-    fun toANSIString() = "\u001b[${color};${backgroundColor}m$textElement\u001b[0m"
+    fun toANSIString() = "\u001b[${color.value};${backgroundColor.value}m${textElement}\u001b[0m"
 
     override fun toString() = textElement
 }

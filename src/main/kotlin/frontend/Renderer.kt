@@ -1,6 +1,5 @@
 package frontend;
 
-import util.Globals
 import util.Globals.Color.TRANSPARENT
 import util.Globals.BackgroundColor.TRANSPARENT as BackgroundColorTRANSPARENT
 
@@ -28,7 +27,7 @@ class Renderer {
         return finalString.toString()
     }
 
-    fun process(size: Pair<Int, Int>): String {
+    fun render(size: Pair<Int, Int>): String {
         buffer = mutableListOf()
         final = mutableListOf()
 

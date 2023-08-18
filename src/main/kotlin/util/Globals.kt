@@ -3,7 +3,7 @@ package util
 object Globals {
     const val EXPIRATION_TIME = 10000L
 
-    enum class Color(value: Int) {
+    enum class Color(val value: Int) {
         BLACK(30),
         RED(31),
         GREEN(32),
@@ -22,7 +22,7 @@ object Globals {
         LIGHT_GRAY(97),
         TRANSPARENT(0)
     }
-    enum class BackgroundColor(value: Int) {
+    enum class BackgroundColor(val value: Int) {
         BLACK(40),
         RED(41),
         GREEN(42),

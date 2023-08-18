@@ -1,12 +1,34 @@
+import frontend.Canvas
+import frontend.Console
+import frontend.Renderer
 import network.ClientDiscovery.broadcast
 import network.ClientDiscovery.listen
 import network.DiscoveredClientsStore
 import network.MessageTransceiver.listenForMessages
 import network.MessageTransceiver.sendMessage
+import util.Globals
+import util.Globals.BackgroundColor.BLACK
+import util.Globals.Color.WHITE
 import util.Globals.EXPIRATION_TIME
 import kotlin.concurrent.thread
 
 fun main(args: Array<String>) {
+    thread(start = true) {
+        Canvas(100, 14).apply{
+            blit(frontend.painter.Text("Test", WHITE, BLACK), Pair(0, 0))
+        }.let{
+            Renderer().apply{
+                stash(it)
+            }.let{ r ->
+                while(true) {
+                    Console.put(r.render(Pair(it.size.first, it.size.second)))
+                    Console.throttle(30)
+                }
+            }
+        }
+    }
+
+    /*
     if (args.isEmpty()) {
         println("Please provide a network interface name.")
         return
@@ -33,5 +55,6 @@ fun main(args: Array<String>) {
         Thread.sleep(20000L)
         sendMessage("TEST MESSAGE")
     }
+    */
 }
 
