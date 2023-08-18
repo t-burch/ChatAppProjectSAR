@@ -1,0 +1,4 @@
+package frontend
+
+class Console {
+}
