@@ -15,19 +15,19 @@ class Canvas(
 
     fun blit(
         painter: Painter,
-        locator: Pair<Int, Int>
+        displacement: Pair<Int, Int>
     ) {
         val layer: List<List<Rich>> = painter.paint()
         val result = mutableListOf<MutableList<Rich>>()
         val spacer = Rich("\u2800", TRANSPARENT, BackgroundColorTRANSPARENT)
         val hFinalSpacer = List(size.first){ spacer }
 
-        result.addAll(List(locator.second) { hFinalSpacer.toMutableList() })
+        result.addAll(List(displacement.second) { hFinalSpacer.toMutableList() })
 
         for (row in layer) {
-            val hSpacer = MutableList(locator.first) { spacer }
+            val hSpacer = MutableList(displacement.first) { spacer }
             hSpacer.addAll(row)
-            hSpacer.addAll(List(size.first - (row.size + locator.first)) { spacer })
+            hSpacer.addAll(List(size.first - (row.size + displacement.first)) { spacer })
             result.add(hSpacer)
         }
 
