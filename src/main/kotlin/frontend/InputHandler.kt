@@ -1,36 +1,65 @@
 package frontend
 
-import java.io.Console
+import org.jline.terminal.Terminal
+import org.jline.terminal.TerminalBuilder
+import org.jline.utils.NonBlockingReader
+import kotlin.system.exitProcess
 
-class InputHandler {
-    private val console: Console = System.console()
+class InputHandler(private val charLimit: Int) {
+    private val terminal: Terminal = TerminalBuilder.builder()
+        .system(true)
+        .build()
+
+    private val reader: NonBlockingReader = terminal.reader()
+
     private val composing = StringBuilder()
     private var cursor = 0
 
+    init {
+        terminal.enterRawMode()
+    }
+
     fun handle(): Pair<String, Int> {
-        when (val key = console.reader().read()) {
+        when (val read = reader.read(100)) {
+            3 -> { // CTRL+C
+                close()
+                exitProcess(0)
+            }
             27 -> {
-                console.reader().read()
-                when (console.reader().read()) {
-                    67 -> if (cursor < composing.length) cursor++  // Right arrow
-                    68 -> if (cursor > 0) cursor--  // Left arrow
+                reader.read()
+                when (reader.read()) {
+                    65 -> { // Arrow Up
+                        // Placeholder for Arrow Up action
+                    }
+                    66 -> { // Arrow Down
+                        // Placeholder for Arrow Down action
+                    }
+                    67 -> if (cursor < composing.length) cursor++ // Right arrow
+                    68 -> if (cursor > 0) cursor-- // Left arrow
                 }
             }
-            8, 127 -> {  // Backspace/Delete key
+            8, 127 -> { // Backspace/Delete
                 if (cursor > 0) {
                     composing.deleteCharAt(cursor - 1)
                     cursor--
                 }
             }
-            10, 13 -> {  // Newline/Carriage return
-                // Here we do nothing if you don't want to handle Enter.
-                // If you want to, perhaps clear the composing string or send a message.
+            -2 -> {
+                return Pair(composing.toString(), cursor) // Return early for timeout without processing
             }
-            else -> {  // Regular key press
-                composing.insert(cursor, key.toChar())
-                cursor++
+            else -> { // Other characters
+                if (composing.length < 99) {
+                    composing.insert(cursor, read.toChar())
+                    cursor++
+                }
             }
         }
+
         return Pair(composing.toString(), cursor)
+    }
+
+    private fun close() {
+        reader.close()
+        terminal.close()
     }
 }

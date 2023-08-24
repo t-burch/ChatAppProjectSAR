@@ -11,12 +11,12 @@ import util.Globals.Color.WHITE
 import java.awt.Color.red
 import kotlin.concurrent.thread
 
-@Volatile var composing = ""
-@Volatile var cursorPosition = 0
-
 fun main(args: Array<String>) {
+    var composing = ""
+    var cursorPosition = 0
+
     thread(start = true) {
-        val inputHandler = InputHandler()
+        val inputHandler = InputHandler(99)
         while(true) {
             val result = inputHandler.handle()
             composing = result.first
