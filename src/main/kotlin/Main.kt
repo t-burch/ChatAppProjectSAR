@@ -5,10 +5,7 @@ import frontend.painter.Surface
 import frontend.painter.Text
 import util.Globals
 import util.Globals.BackgroundColor.BLACK
-import util.Globals.BackgroundColor.RED
-import util.Globals.Color.TRANSPARENT
 import util.Globals.Color.WHITE
-import java.awt.Color.red
 import kotlin.concurrent.thread
 
 fun main(args: Array<String>) {
@@ -40,7 +37,7 @@ fun main(args: Array<String>) {
                 // Chat Message
                 blit(Text(composing, Globals.Color.BLACK, Globals.BackgroundColor.WHITE), Pair(40, 1))
                 // Message Cursor
-                blit(Surface("‾", TRANSPARENT, RED), Pair(40+cursorPosition, 0))
+                blit(Surface("‾", WHITE, BLACK), Pair(40+cursorPosition, 0))
             }.let {
                 Renderer().apply {
                     stash(it)
