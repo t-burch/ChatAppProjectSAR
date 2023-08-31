@@ -19,7 +19,7 @@ object DummyMessageStore {
         Pair("378433", DummyMessageEntry(5473658732, "Test Message 13"))
     )
 
-    fun getAllClients(): Map<String, DummyMessageEntry> = store.toMap()
+    fun getAllMessages(): Map<String, DummyMessageEntry> = store.toMap()
 }
 
 data class DummyMessageEntry(
