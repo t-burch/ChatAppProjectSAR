@@ -2,6 +2,8 @@ package frontend.painter.interceptor
 
 import frontend.Rich
 import frontend.painter.Painter
+import util.Globals.Color.TRANSPARENT
+import util.Globals.BackgroundColor.TRANSPARENT as BG_TRANSPARENT
 
 class Crop(
     private val painter: Painter,
@@ -12,17 +14,25 @@ class Crop(
     override fun paint(): List<List<Rich>> {
         val originalOutput = painter.paint()
 
-        // Ensure that not cropping outside of bounds
-        if (offset.first + size.first > originalOutput.size
-            || offset.second + size.second > originalOutput[0].size) {
-            throw IllegalArgumentException("Attempting to crop outside of original dimensions.")
-        }
-
         val croppedOutput = mutableListOf<List<Rich>>()
 
-        for (i in offset.first until offset.first + size.first) {
-            val row = originalOutput[i].subList(offset.second, offset.second + size.second)
-            croppedOutput.add(row)
+        for (i in 0 until size.first) {
+            val rowIndex = i + offset.first
+
+            if (rowIndex < originalOutput.size) {
+                val row = if (offset.second + size.second <= originalOutput[rowIndex].size) {
+                    originalOutput[rowIndex].subList(offset.second, offset.second + size.second)
+                } else {
+                    val paddedRow = originalOutput[rowIndex].toMutableList()
+                    while (paddedRow.size < offset.second + size.second) {
+                        paddedRow.add(Rich("⠀", TRANSPARENT, BG_TRANSPARENT))
+                    }
+                    paddedRow.subList(offset.second, offset.second + size.second)
+                }
+                croppedOutput.add(row)
+            } else {
+                croppedOutput.add(List(size.second) { Rich("⠀", TRANSPARENT, BG_TRANSPARENT) })
+            }
         }
 
         return croppedOutput
