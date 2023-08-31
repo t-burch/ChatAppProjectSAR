@@ -11,7 +11,7 @@ object Globals {
         BLUE(34),
         MAGENTA(35),
         CYAN(36),
-        WHITE(37),
+        WHITE(97),
         GRAY(90),
         LIGHT_RED(91),
         LIGHT_GREEN(92),
@@ -19,7 +19,7 @@ object Globals {
         LIGHT_BLUE(94),
         LIGHT_MAGENTA(95),
         LIGHT_CYAN(96),
-        LIGHT_GRAY(97),
+        LIGHT_GRAY(37),
         TRANSPARENT(0)
     }
     enum class BackgroundColor(val value: Int) {

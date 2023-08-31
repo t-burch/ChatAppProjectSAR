@@ -16,22 +16,22 @@ class Crop(
 
         val croppedOutput = mutableListOf<List<Rich>>()
 
-        for (i in 0 until size.first) {
-            val rowIndex = i + offset.first
+        for (i in 0 until size.second) {
+            val rowIndex = i + offset.second
 
             if (rowIndex < originalOutput.size) {
-                val row = if (offset.second + size.second <= originalOutput[rowIndex].size) {
-                    originalOutput[rowIndex].subList(offset.second, offset.second + size.second)
+                val row = if (offset.first + size.first <= originalOutput[rowIndex].size) {
+                    originalOutput[rowIndex].subList(offset.first, offset.first + size.first)
                 } else {
                     val paddedRow = originalOutput[rowIndex].toMutableList()
-                    while (paddedRow.size < offset.second + size.second) {
+                    while (paddedRow.size < offset.first + size.first) {
                         paddedRow.add(Rich("⠀", TRANSPARENT, BG_TRANSPARENT))
                     }
-                    paddedRow.subList(offset.second, offset.second + size.second)
+                    paddedRow.subList(offset.first, offset.first + size.first)
                 }
                 croppedOutput.add(row)
             } else {
-                croppedOutput.add(List(size.second) { Rich("⠀", TRANSPARENT, BG_TRANSPARENT) })
+                croppedOutput.add(List(size.first) { Rich("⠀", TRANSPARENT, BG_TRANSPARENT) })
             }
         }
 

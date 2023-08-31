@@ -8,8 +8,9 @@ import frontend.painter.interceptor.ArrayAlign
 import frontend.painter.interceptor.Crop
 import util.Globals
 import util.Globals.BackgroundColor.BLACK
-import util.Globals.Color.WHITE
+import util.Globals.Color.*
 import kotlin.concurrent.thread
+import util.Globals.BackgroundColor.GRAY as BG_GRAY
 
 fun main(args: Array<String>) {
     var composing = ""
@@ -27,18 +28,23 @@ fun main(args: Array<String>) {
     thread(start = true) {
         while(true) {
             Canvas(140, 33).apply{
+                // Backdrop
+                blit(Block(Rich("█", GRAY, BLACK), Pair(140, 33)), Pair(0, 0))
                 // Chat Bar
-                blit(Block(Rich("█", WHITE, BLACK), Pair(100, 3)), Pair(40, 0))
+                blit(Block(Rich("█", LIGHT_GRAY, BLACK), Pair(100, 3)), Pair(40, 0))
                 // Chat Bar Border
                 blit(Border(Pair(101, 3), WHITE, BLACK), Pair(39, 0))
                 // Discovery Tray
                 blit(Border(Pair(40, 33), WHITE, BLACK), Pair(0, 0))
                 // Message History
-                val messages = DummyMessageStore.getAllMessages().map{Text(it.value.message, WHITE, BLACK)}
+                val messages = DummyMessageStore.getAllMessages().map{Text(it.value.message, WHITE, BG_GRAY)}
                 blit(
                     Crop(
-                        ArrayAlign(messages, 0, VERTICAL), Pair(4, 6), Pair(0, 0)
-                    ), Pair(40, 4)
+                        ArrayAlign(messages, 1, VERTICAL),
+                        Pair(99, 28),
+                        Pair(0, 0)
+                    ),
+                    Pair(40, 4)
                 )
                 // Main Border
                 blit(Border(Pair(140, 33), WHITE, BLACK), Pair(0, 0))
