@@ -4,7 +4,7 @@ import frontend.painter.Painter
 import util.Globals.Color.TRANSPARENT
 import kotlin.collections.MutableList
 import kotlin.collections.List
-import util.Globals.BackgroundColor.TRANSPARENT as BackgroundColorTRANSPARENT
+import util.Globals.BackgroundColor.TRANSPARENT as BG_TRANSPARENT
 
 class Canvas(
     canvasWidth: Int,
@@ -19,7 +19,7 @@ class Canvas(
     ) {
         val layer: List<List<Rich>> = painter.paint()
         val result = mutableListOf<MutableList<Rich>>()
-        val spacer = Rich("\u2800", TRANSPARENT, BackgroundColorTRANSPARENT)
+        val spacer = Rich("\u2800", TRANSPARENT, BG_TRANSPARENT)
         val hFinalSpacer = List(size.first){ spacer }
 
         result.addAll(List(displacement.second) { hFinalSpacer.toMutableList() })
