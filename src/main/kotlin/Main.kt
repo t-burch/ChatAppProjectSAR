@@ -3,6 +3,9 @@ import frontend.painter.Block
 import frontend.painter.Border
 import frontend.painter.Surface
 import frontend.painter.Text
+import frontend.painter.interceptor.Alignment.VERTICAL
+import frontend.painter.interceptor.ArrayAlign
+import frontend.painter.interceptor.Crop
 import util.Globals
 import util.Globals.BackgroundColor.BLACK
 import util.Globals.Color.WHITE
@@ -30,6 +33,13 @@ fun main(args: Array<String>) {
                 blit(Border(Pair(101, 3), WHITE, BLACK), Pair(39, 0))
                 // Discovery Tray
                 blit(Border(Pair(40, 33), WHITE, BLACK), Pair(0, 0))
+                // Message History
+                val messages = DummyMessageStore.getAllMessages().map{Text(it.value.message, WHITE, BLACK)}
+                blit(
+                    Crop(
+                        ArrayAlign(messages, 0, VERTICAL), Pair(4, 6), Pair(0, 0)
+                    ), Pair(40, 4)
+                )
                 // Main Border
                 blit(Border(Pair(140, 33), WHITE, BLACK), Pair(0, 0))
                 // Title Text
