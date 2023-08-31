@@ -4,7 +4,7 @@ import java.util.*
 
 object DummyMessageStore {
     private val store: HashMap<String, DummyMessageEntry> = hashMapOf(
-        Pair("123456", DummyMessageEntry(5473484585, "Test Message 1 uewroiwmzu,ewlhwm4iru4wzr9,w84rmz4dw9r84w,zw94r94574395834\n75894375894375iuerzeoiuzoiu")),
+        Pair("123456", DummyMessageEntry(5473484585, "Test Message 1 uewroiwmzu,ewlhwm4iru4wzr9,w84rmz4dw9r84w,zw94r9457439583475894375894375iuerzeoiuzoiu")),
         Pair("456436", DummyMessageEntry(5768878788, "Test Message 2")),
         Pair("584865", DummyMessageEntry(5476786586, "Test Message 3")),
         Pair("233265", DummyMessageEntry(5473468768, "Test Message 4")),

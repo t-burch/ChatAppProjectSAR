@@ -15,6 +15,7 @@ import util.Globals.BackgroundColor.GRAY as BG_GRAY
 fun main(args: Array<String>) {
     var composing = ""
     var cursorPosition = 0
+    var scrollPosition = 0
 
     thread(start = true) {
         val inputHandler = InputHandler(99)
@@ -22,6 +23,7 @@ fun main(args: Array<String>) {
             val result = inputHandler.handle()
             composing = result.first
             cursorPosition = result.second
+            scrollPosition = result.third
         }
     }
 
@@ -42,7 +44,7 @@ fun main(args: Array<String>) {
                     Crop(
                         ArrayAlign(messages, 1, VERTICAL),
                         Pair(99, 28),
-                        Pair(0, 0)
+                        Pair(0, scrollPosition)
                     ),
                     Pair(40, 4)
                 )

@@ -14,28 +14,40 @@ class InputHandler(private val charLimit: Int) {
 
     private val composing = StringBuilder()
     private var cursor = 0
+    private var scrollPosition = 0
 
     init {
         terminal.enterRawMode()
     }
 
-    fun handle(): Pair<String, Int> {
+    fun handle(): Triple<String, Int, Int> {
         when (val read = reader.read(100)) {
             3 -> { // CTRL+C
                 close()
                 exitProcess(0)
             }
             27 -> {
-                reader.read()
                 when (reader.read()) {
-                    65 -> { // Arrow Up
-                        // Placeholder for Arrow Up action
+                    91 -> {
+                        when (val next = reader.read()) {
+                            65 -> { // Arrow Up
+                                // Placeholder for Arrow Up action
+                            }
+                            66 -> { // Arrow Down
+                                // Placeholder for Arrow Down action
+                            }
+                            67 -> if (cursor < composing.length) cursor++ // Right arrow
+                            68 -> if (cursor > 0) cursor-- // Left arrow
+                            53 -> { // PageUp
+                                reader.read()
+                                scrollPosition++
+                            }
+                            54 -> { // PageDown
+                                reader.read()
+                                if (scrollPosition > 0) scrollPosition--
+                            }
+                        }
                     }
-                    66 -> { // Arrow Down
-                        // Placeholder for Arrow Down action
-                    }
-                    67 -> if (cursor < composing.length) cursor++ // Right arrow
-                    68 -> if (cursor > 0) cursor-- // Left arrow
                 }
             }
             8, 127 -> { // Backspace/Delete
@@ -45,17 +57,17 @@ class InputHandler(private val charLimit: Int) {
                 }
             }
             -2 -> {
-                return Pair(composing.toString(), cursor) // Return early for timeout without processing
+                return Triple(composing.toString(), cursor, scrollPosition) // Return early for timeout without processing
             }
             else -> { // Other characters
-                if (composing.length < 99) {
+                if (composing.length < charLimit) {
                     composing.insert(cursor, read.toChar())
                     cursor++
                 }
             }
         }
 
-        return Pair(composing.toString(), cursor)
+        return Triple(composing.toString(), cursor, scrollPosition)
     }
 
     private fun close() {
