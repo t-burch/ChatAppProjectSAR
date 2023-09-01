@@ -6,7 +6,7 @@ import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
 
-object MessageTransceiver
+object MessageTransceiver {
     fun listenForMessages() {
         DatagramSocket(MESSAGE_PORT).use{ socket ->
             while (alive) {
