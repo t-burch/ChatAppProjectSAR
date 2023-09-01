@@ -1,11 +1,11 @@
 package message
 
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 data class Message(
-    private val timestamp: LocalTime,
-    private val token: String,
-    private val content: String,
-    private val protocol: Char,
-    private val version: Short
+    var timestamp: LocalDateTime,
+    var token: String,
+    var content: String,
+    var protocol: Char,
+    var version: Short
 )

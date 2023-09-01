@@ -1,36 +1,36 @@
 package network
 
-import data.DiscoveredClientsStore
+import data.DataStore.alive
+import util.Globals.MESSAGE_PORT
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
 
-object MessageTransceiver {
-    private const val MESSAGE_PORT = 9999
-
+object MessageTransceiver
     fun listenForMessages() {
-        DatagramSocket(MESSAGE_PORT).use { socket ->
-            while (true) {
-                val receiveData = ByteArray(1024)
-                val packet = DatagramPacket(receiveData, receiveData.size)
-                socket.receive(packet)
+        DatagramSocket(MESSAGE_PORT).use{ socket ->
+            while (alive) {
+                val receiveData = ByteArray(1024).let{data ->
+                    DatagramPacket(data, data.size).let{
+                        socket.receive(it)
 
-                val message = String(packet.data, 0, packet.length)
-                println("Received message: $message from ${packet.address.hostAddress}")
+                        // TODO Actually handle messsage, confirm JWT, save message to datastore/history.
+                        println("Received message: ${
+                            String(it.data, 0, it.length)
+                        } from ${it.address.hostAddress}")
+                    }
+                }
             }
         }
     }
 
-    fun sendMessage(message: String) {
-        val targetAddress = DiscoveredClientsStore.getAllClients().keys.firstOrNull() ?: run{
-            println("No clients discovered to send message to!")
-            return
-        }
-
+    fun sendMessage(targetAddress: String, message: String) {
         DatagramSocket().use{ socket ->
-            val sendData = message.toByteArray()
-            val packet = DatagramPacket(sendData, sendData.size, InetAddress.getByName(targetAddress), MESSAGE_PORT)
-            socket.send(packet)
+            message.toByteArray().let{data ->
+                socket.send(
+                    DatagramPacket(data, data.size, InetAddress.getByName(targetAddress), MESSAGE_PORT)
+                )
+            }
         }
     }
 }

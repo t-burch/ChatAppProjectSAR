@@ -1,4 +1,7 @@
 package message
 
-class MessageSerializer {
+object MessageSerializer {
+    fun Message.serialize() = null
+
+    fun Message.deserialize() = null
 }

@@ -1,31 +1,17 @@
 package network
 
+import data.DataStore.alive
 import data.DiscoveredClientsStore
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.security.Keys
+import util.Globals.BROADCAST_PORT
+import util.Globals.BROADCAST_COOLDOWN
+import util.JwtUtils
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress.getLocalHost
 import java.net.NetworkInterface
-import java.util.*
 
 object ClientDiscovery {
-        private const val SECRET_KEY = "superCoolJWTSigningKeyThatHasEnoughBitsProbablyHopefullyYesYes"
-        private const val BROADCAST_PORT = 9876
-        private const val SLEEP_DURATION = 2000L
-
-        private fun getHostAddress() = getLocalHost().hostAddress
-
-        private fun createJWT(displayName: String) = Date().let {
-            Jwts.builder()
-                .setSubject(getHostAddress())
-                .setIssuedAt(it)
-                .claim("name", displayName)
-                .signWith(Keys.hmacShaKeyFor(SECRET_KEY.toByteArray()))
-                .compact()
-        }
-
-        fun broadcast(interfaceName: String, displayName: String) {
+    fun broadcast(interfaceName: String, displayName: String) {
             DatagramSocket().use{ socket ->
                 socket.apply{
                     broadcast = true
@@ -40,15 +26,14 @@ object ClientDiscovery {
                         ifc.interfaceAddresses.mapNotNull{
                             it.broadcast
                         }.let{
-                            while (true) {
-                                val sendData = createJWT(displayName).toByteArray()
-
-                                for (address in it) {
-                                    val packet = DatagramPacket(sendData, sendData.size, address, BROADCAST_PORT)
-                                    socket.send(packet)
+                            while (alive) {
+                                JwtUtils.buildJwt(getLocalHost().hostAddress, displayName).toByteArray().let{ data ->
+                                    for (address in it) {
+                                        socket.send(DatagramPacket(data, data.size, address, BROADCAST_PORT))
+                                    }
                                 }
 
-                                Thread.sleep(SLEEP_DURATION)
+                                Thread.sleep(BROADCAST_COOLDOWN)
                             }
                         }
                     }
@@ -56,33 +41,22 @@ object ClientDiscovery {
             }
         }
 
-        private fun listAllInterfaces() {
-            println("Available network interfaces are:")
-            NetworkInterface.getNetworkInterfaces().asSequence().forEach{
-                println("Name: ${it.name} - Display name: ${it.displayName}")
-            }
+    // TODO Use for something more intelligent
+    private fun listAllInterfaces() {
+        println("Available network interfaces are:")
+        NetworkInterface.getNetworkInterfaces().asSequence().forEach{
+            println("Name: ${it.name} - Display name: ${it.displayName}")
         }
+    }
 
     fun listen() {
-        DatagramSocket(BROADCAST_PORT).use { socket ->
-            while (true) {
-                val receiveData = ByteArray(1024)
-                val packet = DatagramPacket(receiveData, receiveData.size)
-                socket.receive(packet)
-
-                try {
-                    val claims = Jwts.parserBuilder()
-                        .setSigningKey(SECRET_KEY.toByteArray())
-                        .build()
-                        .parseClaimsJws(String(packet.data, 0, packet.length))
-                        .body
-
-                    val ip = claims.subject
-                    val name = claims["name"] as String
-
-                    DiscoveredClientsStore.addOrUpdateClient(ip, name)
-                } catch (e: Exception) {
-                    println("Error parsing JWT: ${e.message}")
+        DatagramSocket(BROADCAST_PORT).use{ socket ->
+            while (alive) {
+                ByteArray(1024).let{ dat ->
+                    DatagramPacket(dat, dat.size).let{
+                        socket.receive(it)
+                        DiscoveredClientsStore.addOrUpdateClient(String(it.data, 0, it.length))
+                    }
                 }
             }
         }

@@ -2,6 +2,10 @@ package util
 
 object Globals {
     const val EXPIRATION_TIME = 10000L
+    const val JWT_SIGNING_KEY = "superCoolJWTSigningKeyThatHasEnoughBitsProbablyHopefullyYesYes"
+    const val BROADCAST_PORT = 9876
+    const val BROADCAST_COOLDOWN = 2000L
+    const val MESSAGE_PORT = 9999
 
     enum class Color(val value: Int) {
         BLACK(30),
