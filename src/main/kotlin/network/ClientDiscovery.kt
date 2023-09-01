@@ -1,6 +1,6 @@
 package network
 
-import data.DataStore.alive
+import data.SharedStore.alive
 import data.DiscoveredClientsStore
 import util.Globals.BROADCAST_PORT
 import util.Globals.BROADCAST_COOLDOWN

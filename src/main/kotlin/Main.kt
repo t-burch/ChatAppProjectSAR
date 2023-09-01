@@ -1,3 +1,8 @@
+import data.SharedStore
+import data.SharedStore.alive
+import data.SharedStore.composingBuffer
+import data.SharedStore.cursorPosition
+import data.SharedStore.scrollPosition
 import frontend.*
 import frontend.painter.Block
 import frontend.painter.Border
@@ -13,22 +18,18 @@ import kotlin.concurrent.thread
 import util.Globals.BackgroundColor.GRAY as BG_GRAY
 
 fun main(args: Array<String>) {
-    var composing = ""
-    var cursorPosition = 0
-    var scrollPosition = 0
-
     thread(start = true) {
         val inputHandler = InputHandler(99)
-        while(true) {
+        while(alive) {
             val result = inputHandler.handle()
-            composing = result.first
+            composingBuffer = result.first
             cursorPosition = result.second
             scrollPosition = result.third
         }
     }
 
     thread(start = true) {
-        while(true) {
+        while(alive) {
             Canvas(140, 33).apply{
                 // Backdrop
                 blit(Block(Rich("█", GRAY, BLACK), Pair(140, 33)), Pair(0, 0))
@@ -63,7 +64,7 @@ fun main(args: Array<String>) {
                 // Title Text
                 blit(Text("CAPSAR V1.0-Snapshot", WHITE, BLACK), Pair(60, 32))
                 // Chat Message
-                blit(Text(composing, Globals.Color.BLACK, Globals.BackgroundColor.WHITE), Pair(40, 1))
+                blit(Text(composingBuffer, Globals.Color.BLACK, Globals.BackgroundColor.WHITE), Pair(40, 1))
                 // Message Cursor
                 blit(Surface("‾", WHITE, BLACK), Pair(40+cursorPosition, 0))
             }.let {
@@ -91,7 +92,7 @@ fun main(args: Array<String>) {
     thread { listenForMessages() }
 
     thread(start = true) {
-        while (true) {
+        while (alive) {
             Thread.sleep(EXPIRATION_TIME)
             // TODO Set a stale flag instead of deleting
             DiscoveredClientsStore.removeStaleEntries()

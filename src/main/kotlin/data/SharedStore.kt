@@ -2,11 +2,13 @@ package data
 
 import message.Message
 
-object DataStore {
+object SharedStore {
     @Volatile
     var composingBuffer: String = ""
     @Volatile
     var cursorPosition: Int = 0
+    @Volatile
+    var scrollPosition: Int = 0
     @Volatile
     var messages: MutableList<Message> = mutableListOf()
     @Volatile

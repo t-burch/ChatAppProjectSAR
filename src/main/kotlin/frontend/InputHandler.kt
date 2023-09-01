@@ -1,5 +1,7 @@
 package frontend
 
+import data.SharedStore
+import data.SharedStore.alive
 import org.jline.terminal.Terminal
 import org.jline.terminal.TerminalBuilder
 import org.jline.utils.NonBlockingReader
@@ -23,8 +25,7 @@ class InputHandler(private val charLimit: Int) {
     fun handle(): Triple<String, Int, Int> {
         when (val read = reader.read(100)) {
             3 -> { // CTRL+C
-                close()
-                exitProcess(0)
+                alive = false
             }
             27 -> {
                 when (reader.read()) {

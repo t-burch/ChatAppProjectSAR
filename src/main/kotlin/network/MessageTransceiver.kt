@@ -1,6 +1,6 @@
 package network
 
-import data.DataStore.alive
+import data.SharedStore.alive
 import util.Globals.MESSAGE_PORT
 import java.net.DatagramPacket
 import java.net.DatagramSocket
