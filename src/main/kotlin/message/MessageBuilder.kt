@@ -1,0 +1,4 @@
+package message
+
+object MessageBuilder {
+}
