@@ -48,6 +48,16 @@ fun main(args: Array<String>) {
                     ),
                     Pair(40, 4)
                 )
+                // Discovery List
+                val clients = DummyClientStore.getAllClients().map{Text(it.value.name, WHITE, BG_GRAY)}
+                blit(
+                    Crop(
+                        ArrayAlign(clients, 1, VERTICAL),
+                        Pair(38, 28),
+                        Pair(0, 0)
+                    ),
+                    Pair(1, 2)
+                )
                 // Main Border
                 blit(Border(Pair(140, 33), WHITE, BLACK), Pair(0, 0))
                 // Title Text
