@@ -156,6 +156,12 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>1.9.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>1.9.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>

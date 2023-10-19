@@ -7,7 +7,10 @@ import org.jline.terminal.TerminalBuilder
 import org.jline.utils.NonBlockingReader
 import kotlin.system.exitProcess
 
-class InputHandler(private val charLimit: Int) {
+class InputHandler(
+    private val charLimit: Int,
+    private val onEnter: (String) -> Unit
+) {
     private val terminal: Terminal = TerminalBuilder.builder()
         .system(true)
         .build()
@@ -24,28 +27,28 @@ class InputHandler(private val charLimit: Int) {
 
     fun handle(): Triple<String, Int, Int> {
         when (val read = reader.read(100)) {
-            3 -> { // CTRL+C
-                alive = false
+            10, 13 -> { // Enter
+                onEnter(composing.toString())
+                cursor = 0
+                composing.clear()
             }
             27 -> {
                 when (reader.read()) {
                     91 -> {
                         when (val next = reader.read()) {
                             65 -> { // Arrow Up
-                                // Placeholder for Arrow Up action
+                                chatHistoryScrollUp()
                             }
                             66 -> { // Arrow Down
-                                // Placeholder for Arrow Down action
+                                chatHistoryScrollDown()
                             }
                             67 -> if (cursor < composing.length) cursor++ // Right arrow
                             68 -> if (cursor > 0) cursor-- // Left arrow
                             53 -> { // PageUp
-                                reader.read()
-                                scrollPosition++
+                                chatHistoryScrollUp()
                             }
                             54 -> { // PageDown
-                                reader.read()
-                                if (scrollPosition > 0) scrollPosition--
+                                chatHistoryScrollDown()
                             }
                         }
                     }
@@ -71,6 +74,17 @@ class InputHandler(private val charLimit: Int) {
         return Triple(composing.toString(), cursor, scrollPosition)
     }
 
+    private fun chatHistoryScrollDown() {
+        reader.read()
+        if (scrollPosition > 0) scrollPosition--
+    }
+
+    private fun chatHistoryScrollUp() {
+        reader.read()
+        scrollPosition++
+    }
+
+    // TODO Should probably be used.
     private fun close() {
         reader.close()
         terminal.close()

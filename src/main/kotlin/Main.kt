@@ -1,3 +1,4 @@
+import data.MessageStore
 import data.SharedStore
 import data.SharedStore.alive
 import data.SharedStore.composingBuffer
@@ -11,15 +12,25 @@ import frontend.painter.Text
 import frontend.painter.interceptor.Alignment.VERTICAL
 import frontend.painter.interceptor.ArrayAlign
 import frontend.painter.interceptor.Crop
+import message.MessageUtils
+import network.ClientDiscovery.broadcast
+import network.ClientDiscovery.listen
+import network.MessageTransceiver.listenForMessages
 import util.Globals
 import util.Globals.BackgroundColor.BLACK
 import util.Globals.Color.*
+import util.JwtUtils
+import java.net.InetAddress
 import kotlin.concurrent.thread
-import util.Globals.BackgroundColor.GRAY as BG_GRAY
 
 fun main(args: Array<String>) {
+    MessageUtils.storeSystemMessage("You are not connected to anyone.")
+
+    // TODO ALL THREADS: Move thread alive control into separate control instead of individual alive while condition.
     thread(start = true) {
-        val inputHandler = InputHandler(99)
+        val inputHandler = InputHandler(99) {
+            Interpreter.processInput(it)
+        }
         while(alive) {
             val result = inputHandler.handle()
             composingBuffer = result.first
@@ -40,7 +51,22 @@ fun main(args: Array<String>) {
                 // Discovery Tray
                 blit(Border(Pair(40, 33), WHITE, BLACK), Pair(0, 0))
                 // Message History
-                /* val messages =
+                val messages = MessageStore.getAllMessages()
+                    .entries
+                    .sortedByDescending{ it.key }
+                    .map{
+                        when (it.value.token) {
+                            "ff" -> {
+                                Text(it.value.content, RED, BLACK)
+                            }
+                            SharedStore.identityToken -> {
+                                Text(it.value.content, GRAY, BLACK)
+                            }
+                            else -> {
+                                Text(it.value.content, WHITE, BLACK)
+                            }
+                        }
+                    }
                 blit(
                     Crop(
                         ArrayAlign(messages, 1, VERTICAL),
@@ -48,9 +74,9 @@ fun main(args: Array<String>) {
                         Pair(0, scrollPosition)
                     ),
                     Pair(40, 4)
-                ) */
+                )
                 // Discovery List
-                /* val clients = DummyClientStore.getAllClients().map{Text(it.value.name, WHITE, BG_GRAY)}
+                /*val clients = DiscoveredClientsStore.getAllClients().map{Text(it.value.name, WHITE, BG_GRAY)}
                 blit(
                     Crop(
                         ArrayAlign(clients, 1, VERTICAL),
@@ -58,7 +84,7 @@ fun main(args: Array<String>) {
                         Pair(0, 0)
                     ),
                     Pair(1, 2)
-                ) */
+                )*/
                 // Main Border
                 blit(Border(Pair(140, 33), WHITE, BLACK), Pair(0, 0))
                 // Title Text
@@ -79,7 +105,6 @@ fun main(args: Array<String>) {
         }
     }
 
-    /*
     if (args.isEmpty()) {
         println("Please provide a network interface name.")
         return
@@ -87,25 +112,22 @@ fun main(args: Array<String>) {
 
     val interfaceName = args[0]
     val displayName = args[1]
-    thread { listen() }
-    thread { broadcast(interfaceName, displayName) }
-    thread { listenForMessages() }
-
     thread(start = true) {
-        while (alive) {
-            Thread.sleep(EXPIRATION_TIME)
-            // TODO Set a stale flag instead of deleting
-            DiscoveredClientsStore.removeStaleEntries()
-
-            print("\u001b[H\u001b[2J")
-            println(DiscoveredClientsStore.getAllClients())
+        while(alive) {
+            listen()
+        }
+    }
+    thread(start = true) {
+        while(alive) {
+            broadcast(interfaceName, displayName)
+        }
+    }
+    thread(start = true) {
+        while(alive) {
+            listenForMessages()
         }
     }
 
-    thread {
-        Thread.sleep(20000L)
-        sendMessage("TEST MESSAGE")
-    }
-    */
+    SharedStore.identityToken = JwtUtils.buildJwt(InetAddress.getLocalHost().hostAddress, displayName)
 }
 

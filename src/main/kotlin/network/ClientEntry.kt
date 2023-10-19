@@ -1,8 +1,9 @@
 package network
 
 data class ClientEntry(
-    private var name: String,
-    private var lastSeen: Long,
-    private var stale: Boolean,
-    private var address: String
+    val name: String,
+    val lastSeen: Long,
+    val stale: Boolean,
+    val address: String,
+    val token: String
 )

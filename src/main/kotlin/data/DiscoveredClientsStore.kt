@@ -9,7 +9,7 @@ object DiscoveredClientsStore {
 
     fun addOrUpdateClient(jwt: String) {
         JwtUtils.getJWTClaims(jwt).let{
-            store[jwt] = ClientEntry(it["name"] as String, System.currentTimeMillis(), false, it.subject)
+            store[jwt] = ClientEntry(it["name"] as String, System.currentTimeMillis(), false, it.subject, jwt)
         }
     }
 

@@ -2,6 +2,7 @@ package network
 
 import data.SharedStore.alive
 import data.DiscoveredClientsStore
+import data.SharedStore
 import util.Globals.BROADCAST_PORT
 import util.Globals.BROADCAST_COOLDOWN
 import util.JwtUtils
@@ -27,7 +28,7 @@ object ClientDiscovery {
                             it.broadcast
                         }.let{
                             while (alive) {
-                                JwtUtils.buildJwt(getLocalHost().hostAddress, displayName).toByteArray().let{ data ->
+                                SharedStore.identityToken.toByteArray().let{ data ->
                                     for (address in it) {
                                         socket.send(DatagramPacket(data, data.size, address, BROADCAST_PORT))
                                     }

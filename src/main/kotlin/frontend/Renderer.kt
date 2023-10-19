@@ -1,4 +1,4 @@
-package frontend;
+package frontend
 
 import util.Globals.Color.TRANSPARENT
 import util.Globals.BackgroundColor.TRANSPARENT as BackgroundColorTRANSPARENT
